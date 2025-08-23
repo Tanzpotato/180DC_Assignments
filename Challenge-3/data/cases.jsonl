@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "Man sues parrot for defamation",
+    "year": 2019,
+    "jurisdiction": "Florida",
+    "tags": ["defamation", "animal law", "humor"],
+    "text": "A man claimed that his neighbor’s parrot repeated defamatory statements, damaging his reputation."
+  },
+  {
+    "id": 2,
+    "title": "Woman challenges traffic light timing",
+    "year": 2021,
+    "jurisdiction": "California",
+    "tags": ["traffic", "safety", "civil rights"],
+    "text": "The plaintiff argued that the yellow light was too short, causing her to receive an unfair ticket."
+  },
+  {
+    "id": 3,
+    "title": "Dog inherits millionaire’s estate",
+    "year": 2018,
+    "jurisdiction": "New York",
+    "tags": ["inheritance", "animal law", "estate"],
+    "text": "A wealthy man left his entire fortune to his pet dog, sparking a legal battle among distant relatives."
+  },
+  {
+    "id": 4,
+    "title": "Student sues university over bad WiFi",
+    "year": 2022,
+    "jurisdiction": "Texas",
+    "tags": ["technology", "education", "consumer rights"],
+    "text": "A student claimed poor campus WiFi disrupted online classes and demanded tuition reimbursement."
+  },
+  {
+    "id": 5,
+    "title": "Man sues himself and wins",
+    "year": 2020,
+    "jurisdiction": "Oregon",
+    "tags": ["absurd law", "self litigation"],
+    "text": "In a bizarre turn, a man filed a lawsuit against himself for damages and technically won, but owed himself money."
+  }
+]
