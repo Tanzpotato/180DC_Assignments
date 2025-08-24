@@ -1,81 +1,93 @@
 from fastapi import FastAPI, Body
-import uuid
+import uuid, random
+from typing import Dict, Any
 
-# ✅ Use package imports (works when running `uvicorn backend.app.main:app --reload`)
-from .models import rag_lawyer, chaos_lawyer
-from .generator import generate_case
-from .retrieval import load_corpus
+# ✅ Absolute imports since we run `uvicorn backend.app.main:app`
+from backend.app.models import rag_lawyer, chaos_lawyer
+from backend.app.generator import generate_case
+from backend.app.retrieval import load_corpus
 
 app = FastAPI()
 
-# Store active sessions in memory
-DEBATE_SESSIONS = {}
+# In-memory session storage
+DEBATE_SESSIONS: Dict[str, Any] = {}
 
-# Load case corpus (adjust path if needed)
-DOCS = load_corpus("Metadata/cases.jsonl")
+# Load case corpus once
+try:
+    DOCS = load_corpus("Metadata/cases.jsonl")
+except Exception as e:
+    print(f"⚠️ Could not load corpus: {e}")
+    DOCS = []
 
 
 # -----------------------------
 # Endpoints
 # -----------------------------
+
 @app.get("/")
 def root():
-    return {"message": "Legal Debate API is running"}
+    return {"message": "✅ Legal Debate API is running"}
 
 
 @app.post("/generate_case")
 def get_case():
-    """Return a randomly generated case."""
+    """Return a randomly generated case from Metadata/cases.jsonl."""
     case = generate_case()
     return {"case": case}
 
 
 @app.post("/debate")
-def debate(case: dict):
-    """Simulate a multi-round debate and store session (no AI judge decision)."""
-    rag_turns = []
-    chaos_turns = []
-    case_text = case["case"]
+def debate(case: Dict[str, Any]):
+    """Simulate a multi-round debate. Returns arguments, but no judge decision."""
+    case_text = case["case"] if isinstance(case, dict) and "case" in case else case
 
-    # Simulate 3 rounds of back-and-forth
+    prosecution_turns = []
+    defense_turns = []
+
+    # Simulate 3 rounds of arguments
     for round_num in range(3):
-        rag_argument = rag_lawyer(case_text, round_num)
-        chaos_argument = chaos_lawyer(case_text, round_num)
+        prosecution_turns.append({
+            "round": round_num + 1,
+            "argument": rag_lawyer(case_text, round_num)
+        })
+        defense_turns.append({
+            "round": round_num + 1,
+            "argument": chaos_lawyer(case_text, round_num)
+        })
 
-        rag_turns.append({"round": round_num + 1, "argument": rag_argument})
-        chaos_turns.append({"round": round_num + 1, "argument": chaos_argument})
-
-    # Store session without judge decision
     session_id = str(uuid.uuid4())
-    DEBATE_SESSIONS[session_id] = {
-        "case": case_text,
-        "rag_lawyer": rag_turns,
-        "chaos_lawyer": chaos_turns,
-        "judge_decision": None,  # ✅ Left empty for the user to decide later
-    }
-
-    return {
+    debate_obj = {
         "session_id": session_id,
         "case": case_text,
-        "rag_lawyer": rag_turns,
-        "chaos_lawyer": chaos_turns,
-        "judge_decision": None,
+        "prosecution": prosecution_turns,
+        "defense": defense_turns,
     }
 
+    DEBATE_SESSIONS[session_id] = debate_obj
+    return debate_obj
 
-@app.post("/judge_decision")
-def judge_decision(
-    session_id: str = Body(...),
-    verdict: str = Body(...),
-):
-    """User sets the final verdict (acts as the judge)."""
-    if session_id not in DEBATE_SESSIONS:
-        return {"error": "Invalid session_id"}
 
-    session = DEBATE_SESSIONS[session_id]
-    session["judge_decision"] = f"Judge rules in favor of {verdict}"
+@app.post("/summarize_verdict")
+def summarize_verdict(payload: Dict[str, Any] = Body(...)):
+    """
+    Summarize the case, arguments, and final verdict.
+    This is called after the user (judge) submits their decision.
+    """
+    case = payload.get("case", {})
+    pros = payload.get("prosecution", [])
+    defs = payload.get("defense", [])
+    verdict = payload.get("judge_decision", "No decision provided")
 
-    return {
-        "session_id": session_id,
-        "judge_decision": session["judge_decision"],
-    }
+    # Very simple summarization (replace with LLM call if needed)
+    case_title = case.get("title") if isinstance(case, dict) else str(case)
+    pros_points = "; ".join([p["argument"] for p in pros])
+    defs_points = "; ".join([d["argument"] for d in defs])
+
+    summary = (
+        f"**Case:** {case_title}\n\n"
+        f"**Prosecution argued:** {pros_points}\n\n"
+        f"**Defense argued:** {defs_points}\n\n"
+        f"**Final Verdict:** Judge ruled in favor of **{verdict}**."
+    )
+
+    return {"summary": summary}

@@ -13,17 +13,39 @@ def load_corpus(path="Metadata/cases.jsonl"):
             raise ValueError(f"Corpus file is empty: {abs_path}")
 
         if content.startswith("["):
-            # JSON array
-            docs = json.loads(content)
+            # ✅ Handle JSON array
+            try:
+                parsed = json.loads(content)
+                if isinstance(parsed, list):
+                    docs = parsed
+                else:
+                    raise ValueError("Expected a JSON array in corpus file.")
+            except json.JSONDecodeError as e:
+                raise ValueError(f"Invalid JSON array in {abs_path}") from e
         else:
-            # JSONL
-            for line in content.splitlines():
+            # ✅ Handle JSONL (one JSON object per line)
+            for i, line in enumerate(content.splitlines(), start=1):
                 line = line.strip()
-                if not line:   # ✅ skip blank lines
+                if not line:
                     continue
                 try:
-                    docs.append(json.loads(line))
+                    obj = json.loads(line)
+                    if isinstance(obj, dict):
+                        docs.append(obj)
+                    else:
+                        docs.append({"id": i, "text": str(obj)})
                 except json.JSONDecodeError as e:
-                    raise ValueError(f"Invalid JSON in {abs_path} at line: {line}") from e
+                    print(f"⚠️ Skipping invalid JSON at line {i}: {e}")
+
+    if not docs:
+        # ✅ Fallback so backend never crashes
+        docs.append({
+            "id": 0,
+            "title": "No Valid Cases",
+            "year": "N/A",
+            "jurisdiction": "Unknown",
+            "tags": ["empty"],
+            "text": "⚠️ No valid cases could be loaded from the corpus."
+        })
 
     return docs
