@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pydantic
+rank-bm25
+sentence-transformers
+faiss-cpu
+numpy
+streamlit

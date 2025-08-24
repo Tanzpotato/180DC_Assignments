@@ -1,0 +1,25 @@
+import json
+import pickle
+from sentence_transformers import SentenceTransformer
+
+# Load dataset
+with open("backend/data/cases.json", "r") as f:
+    cases = json.load(f)
+
+# Load embedding model (e.g., all-MiniLM)
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+# Create embeddings for each case
+embeddings = []
+metadata = []
+
+for case in cases:
+    vector = model.encode(case["text"]).tolist()
+    embeddings.append(vector)
+    metadata.append(case)  # keep full metadata
+
+# Save both embeddings + metadata into one pickle
+with open("backend/data/embeddings.pkl", "wb") as f:
+    pickle.dump({"embeddings": embeddings, "metadata": metadata}, f)
+
+print("✅ embeddings.pkl created successfully")
