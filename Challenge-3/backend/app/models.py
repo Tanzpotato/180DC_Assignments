@@ -1,24 +1,53 @@
-import random
+# backend/app/models.py
 
-def rag_lawyer(case, round_num=0):
-    responses = [
-        f"As prosecution, precedent supports liability in {case}.",
-        f"Counterpoint: The defense overlooks statutory duties relevant to {case}.",
-        f"Final note: Courts usually side with established precedent in {case}."
-    ]
-    return responses[round_num % len(responses)]
+from typing import List, Dict, Any, Union
+from backend.app.llm import (
+    rag_lawyer,
+    chaos_lawyer,
+    summarize_verdict as summarize_verdict_llm,  # alias to keep old name
+    judge as judge_random_event,
+)
 
-def chaos_lawyer(case, round_num=0):
-    responses = [
-        f"As defense, I argue wildly: What if {case} was staged?",
-        f"Counterattack: Suppose aliens influenced {case}!",
-        f"Closing chaos: If a toaster can talk, why not in {case}?"
-    ]
-    return responses[round_num % len(responses)]
 
-def judge(case, rag_turns, chaos_turns):
-    # Very naive rule: pick RAG if more structured, Chaos if funnier
-    if random.random() > 0.5:
-        return "⚖️ Judge: I rule in favor of RAG Lawyer — stronger precedent."
-    else:
-        return "⚖️ Judge: I side with Chaos Lawyer — creativity prevails."
+# -------------------------------------------------------------------
+# Unified interface wrappers for main.py and other modules
+# -------------------------------------------------------------------
+
+def rag_lawyer_wrapper(case_text: str, round_num: int, context: str = "") -> str:
+    """
+    Prosecution lawyer (RAG) wrapper.
+    Delegates to backend.app.llm.rag_lawyer.
+    """
+    return rag_lawyer(case_text, round_num, context)
+
+
+def chaos_lawyer_wrapper(case_text: str, round_num: int) -> str:
+    """
+    Defense lawyer (chaotic/random style) wrapper.
+    Delegates to backend.app.llm.chaos_lawyer.
+    """
+    return chaos_lawyer(case_text, round_num)
+
+
+def summarize_verdict(
+    case: Union[Dict[str, Any], str],
+    pros: List[Dict[str, str]],
+    cons: List[Dict[str, str]],
+    verdict: str
+) -> str:
+    """
+    Summarize the debate outcome and verdict using the LLM.
+    """
+    return summarize_verdict_llm(case, pros, cons, verdict)
+
+
+def judge(
+    case: Union[Dict[str, Any], str],
+    rag_turns: List[Dict[str, str]],
+    chaos_turns: List[Dict[str, str]]
+) -> str:
+    """
+    Generate a random but plausible courtroom event.
+    Does NOT decide the verdict – user provides the final decision.
+    """
+    return judge_random_event(case, rag_turns, chaos_turns)

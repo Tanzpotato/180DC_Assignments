@@ -1,45 +1,56 @@
-import json
-import os
+# backend/app/generator.py
+
 import random
-from typing import Dict, Any
+import logging
+from typing import Dict, Any, List
+from backend.app.retrieval import load_corpus
 
-# Path to your JSONL corpus
-CORPUS_PATH = os.path.join("Metadata", "cases.jsonl")
+logger = logging.getLogger(__name__)
 
+def generate_case(corpus_path: str = "Metadata/cases.jsonl", verbose: bool = True) -> Dict[str, Any]:
+    """
+    Generate a random legal case from the loaded corpus.
+    
+    Returns a dictionary with at least:
+      - id
+      - title
+      - text
+      - year
+      - jurisdiction
+      - tags
+    """
+    try:
+        docs: List[Dict[str, Any]] = load_corpus(corpus_path, verbose=verbose)
+        if not docs:
+            logger.warning("⚠️ Corpus is empty, returning placeholder case.")
+            return {
+                "id": 0,
+                "title": "No Cases Available",
+                "year": "N/A",
+                "jurisdiction": "Unknown",
+                "tags": ["empty"],
+                "text": "⚠️ No cases available in the corpus."
+            }
+        case = random.choice(docs)
+        # Ensure required keys exist
+        case.setdefault("id", 0)
+        case.setdefault("title", "Untitled Case")
+        case.setdefault("text", "No description available.")
+        case.setdefault("year", "N/A")
+        case.setdefault("jurisdiction", "Unknown")
+        case.setdefault("tags", [])
 
-def load_cases() -> list[Dict[str, Any]]:
-    """Load all cases from the JSONL file."""
-    if not os.path.exists(CORPUS_PATH):
-        raise FileNotFoundError(f"Corpus not found at {CORPUS_PATH}")
+        if verbose:
+            logger.info(f"🎲 Selected case: {case.get('title')}")
+        return case
 
-    cases = []
-    with open(CORPUS_PATH, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if line:  # skip blank lines
-                try:
-                    cases.append(json.loads(line))
-                except json.JSONDecodeError as e:
-                    print(f"⚠️ Skipping invalid line: {e}")
-    return cases
-
-
-def generate_case() -> Dict[str, Any]:
-    """Return a random case from the JSONL corpus as a dict."""
-    cases = load_cases()
-    if not cases:
-        # Fallback: return a dummy case if no data found
+    except Exception as e:
+        logger.error(f"⚠️ Error generating case: {e}")
         return {
             "id": 0,
-            "title": "Dummy Case",
-            "year": 2023,
+            "title": "Error Case",
+            "year": "N/A",
             "jurisdiction": "Unknown",
-            "tags": ["test"],
-            "text": "This is a placeholder case since no valid cases were found."
+            "tags": ["error"],
+            "text": f"⚠️ An error occurred while generating a case: {e}"
         }
-    return random.choice(cases)
-
-
-# For quick testing
-if __name__ == "__main__":
-    print(generate_case())
