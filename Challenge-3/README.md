@@ -25,8 +25,10 @@
 
  ├── requirements.txt     # Project dependencies
 
- └── README.md            # Project documentation
-
+ ├── README.md            
+ 
+ └──AI_Legal_Debate_Report.pdf #Project Documentation
+ 
 # Prerequisites
 
 >## Core backend
