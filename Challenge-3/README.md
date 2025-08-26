@@ -2,8 +2,6 @@
 
 ## Project Structure 
 
-Challenge-3/
-│
 ##  backend/app/
     ├── main.py          # FastAPI backend (debate orchestration & API endpoints)
   
