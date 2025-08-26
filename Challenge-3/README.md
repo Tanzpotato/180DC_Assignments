@@ -29,19 +29,19 @@
 
 # Prerequisites
 
-> Core backend
+>## Core backend
 
 fastapi==0.110.0
 
 uvicorn==0.27.1
 
-> Frontend
+>## Frontend
 
 streamlit==1.32.0
 
 requests==2.31.0
 
-> Retrieval & Embeddings
+>## Retrieval & Embeddings
 
 sentence-transformers==2.2.2
 
@@ -53,7 +53,7 @@ numpy==1.26.4
 
 scipy==1.12.0
 
-> Utilities
+>## Utilities
 
 python-dotenv==1.0.1  
 
