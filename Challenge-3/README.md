@@ -25,27 +25,37 @@ Challenge-3/
 ##  Metadata/
     └── cases.jsonl      # Dataset of legal cases with metadata
 
-├── requirements.txt     # Project dependencies
+ ├── requirements.txt     # Project dependencies
 
-└── README.md            # Project documentation
+ └── README.md            # Project documentation
 
 # Prerequisites
 
 > Core backend
+
 fastapi==0.110.0
+
 uvicorn==0.27.1
 
 > Frontend
+
 streamlit==1.32.0
+
 requests==2.31.0
 
 > Retrieval & Embeddings
+
 sentence-transformers==2.2.2
+
 torch>=1.10.0
+
 scikit-learn==1.4.1.post1
+
 numpy==1.26.4
+
 scipy==1.12.0
 
 > Utilities
+
 python-dotenv==1.0.1  
 
