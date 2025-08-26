@@ -19,16 +19,14 @@ Challenge-3/
    
     └── __init__.py      # Package initializer
 
-├── frontend/
-│   └── streamlit_app.py # Streamlit UI for interactive debate
-│
-├── Metadata/
-│   └── cases.jsonl      # Dataset of legal cases with metadata
-│
-├── utils/
-│   └── generate_facts.py # Expands cases into structured factual snippets
-│
+##  frontend/
+    └── streamlit_app.py # Streamlit UI for interactive debate
+
+##  Metadata/
+    └── cases.jsonl      # Dataset of legal cases with metadata
+
 ├── requirements.txt     # Project dependencies
+
 └── README.md            # Project documentation
 
 # Prerequisites
