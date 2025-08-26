@@ -14,6 +14,8 @@
     ├── llm.py           # RAG lawyer, chaos lawyer, judge, embeddings
    
     ├── config.py        # Configuration settings
+
+    ├── generate_facts.py #Dynamically generates factual based arguments for the lawyers
    
     └── __init__.py      # Package initializer
 
