@@ -4,15 +4,21 @@
 
 Challenge-3/
 │
-├── backend/app/
-│   ├── main.py          # FastAPI backend (debate orchestration & API endpoints)
-│   ├── retrieval.py     # Loads and parses legal case corpus
-│   ├── generator.py     # Selects and generates cases from corpus
-│   ├── models.py        # Wrappers connecting LLM logic and app
-│   ├── llm.py           # RAG lawyer, chaos lawyer, judge, embeddings
-│   ├── config.py        # Configuration settings
-│   └── __init__.py      # Package initializer
-│
+##  backend/app/
+    ├── main.py          # FastAPI backend (debate orchestration & API endpoints)
+  
+    ├── retrieval.py     # Loads and parses legal case corpus
+   
+    ├── generator.py     # Selects and generates cases from corpus
+   
+    ├── models.py        # Wrappers connecting LLM logic and app
+   
+    ├── llm.py           # RAG lawyer, chaos lawyer, judge, embeddings
+   
+    ├── config.py        # Configuration settings
+   
+    └── __init__.py      # Package initializer
+
 ├── frontend/
 │   └── streamlit_app.py # Streamlit UI for interactive debate
 │
