@@ -1,6 +1,7 @@
 # AI Legal Debate
 
-Project Structure
+## Project Structure 
+
 Challenge-3/
 │
 ├── backend/app/
@@ -25,6 +26,7 @@ Challenge-3/
 └── README.md            # Project documentation
 
 # Prerequisites
+
 > Core backend
 fastapi==0.110.0
 uvicorn==0.27.1
